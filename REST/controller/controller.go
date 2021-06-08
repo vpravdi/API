@@ -6,13 +6,17 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/globalsign/mgo"
 	"github.com/julienschmidt/httprouter"
+	//"gopkg.in/mgo.v2"
 )
 
-type UserController struct{}
+type UserController struct {
+	session *mgo.Session
+}
 
-func NewUserController() *UserController {
-	return &UserController{}
+func NewUserController(s *mgo.Session) *UserController {
+	return &UserController{s}
 }
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
