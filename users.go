@@ -13,6 +13,8 @@ func main() {
 	r := httprouter.New()
 	r.GET("/", index)
 	r.GET("/user/:id", getUser)
+	r.POST("/user/", createUser)
+	r.DELETE("/user/:id", deleteUser)
 	http.ListenAndServe("localhost:8080", r)
 
 }
@@ -49,4 +51,23 @@ func getUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 	fmt.Fprintf(w, "%s\n", userjson)
 
+}
+
+func createUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	u := model.User{}
+
+	json.NewDecoder(r.Body).Decode(&u)
+
+	u.Id = "1352"
+
+	userjson, _ := json.Marshal(u)
+
+	w.Header().Set("Content-Type", "application/json")
+
+	fmt.Fprint(w, "%s\n", userjson)
+}
+
+func deleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "deleted\n")
 }
