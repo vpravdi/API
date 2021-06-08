@@ -1,7 +1,7 @@
-package main
+package controller
 
 import (
-	model "API/models"
+	model "API/REST/models"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,14 +9,10 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func main() {
-	r := httprouter.New()
-	r.GET("/", index)
-	r.GET("/user/:id", getUser)
-	r.POST("/user/", createUser)
-	r.DELETE("/user/:id", deleteUser)
-	http.ListenAndServe("localhost:8080", r)
+type UserController struct{}
 
+func NewUserController() *UserController {
+	return &UserController{}
 }
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -37,7 +33,7 @@ func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 }
 
-func getUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (uc UserController) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	u := model.User{
 		Name:   "Dinesh Praveen",
 		Gender: "Male",
@@ -48,26 +44,27 @@ func getUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	userjson, _ := json.Marshal(u)
 
 	w.Header().Set("Content-Type", "application/json")
-
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "%s\n", userjson)
 
 }
 
-func createUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	u := model.User{}
 
 	json.NewDecoder(r.Body).Decode(&u)
 
-	u.Id = "1352"
+	u.Id = "007"
 
-	userjson, _ := json.Marshal(u)
+	uj, _ := json.Marshal(u)
+	fmt.Println(uj)
 
 	w.Header().Set("Content-Type", "application/json")
-
-	fmt.Fprint(w, "%s\n", userjson)
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintf(w, "%s\n", uj)
 }
 
-func deleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (uc UserController) DeleteUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, "deleted\n")
 }
