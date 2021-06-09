@@ -23,18 +23,18 @@ func NewUserController(s *mgo.Session) *UserController {
 }
 
 func (uc UserController) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
+	//id retreived from httprouter parameter to be used to fetch the user's unique id
 	id := p.ByName("id")
 
 	if !bson.IsObjectIdHex(id) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-
+	//object ID hexed up to read from mongo instance
 	oid := bson.ObjectIdHex(id)
-
+	//initiating the composite literal
 	u := model.User{}
-
+	//reading the local mongo instance for the user present
 	if err := uc.session.DB("go-go-db").C("users").FindId(oid).One(&u); err != nil {
 		w.WriteHeader(http.StatusNoContent)
 		fmt.Println(err)
