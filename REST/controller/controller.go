@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/globalsign/mgo"
+	//"github.com/globalsign/mgo"
+	//"github.com/globalsign/mgo/bson"
 	"github.com/julienschmidt/httprouter"
-	//"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type UserController struct {
@@ -19,6 +21,7 @@ func NewUserController(s *mgo.Session) *UserController {
 	return &UserController{s}
 }
 
+/*
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	s := `<!DOCTYPE html>
 			<html lang="en">
@@ -36,13 +39,24 @@ func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Write([]byte(s))
 
 }
-
+*/
 func (uc UserController) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	u := model.User{
-		Name:   "Dinesh Praveen",
-		Gender: "Male",
-		Age:    15,
-		Id:     p.ByName("id"),
+
+	id := p.ByName("id")
+
+	if !bson.IsObjectIdHex(id) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	oid := bson.ObjectIdHex(id)
+
+	u := model.User{}
+
+	if err := uc.session.DB("go-go-db").C("users").FindId(oid).One(&u); err != nil {
+		w.WriteHeader(http.StatusNoContent)
+		fmt.Println(err)
+		return
 	}
 
 	userjson, _ := json.Marshal(u)
@@ -58,7 +72,9 @@ func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request, _ ht
 
 	json.NewDecoder(r.Body).Decode(&u)
 
-	u.Id = "007"
+	u.Id = bson.NewObjectId()
+
+	uc.session.DB("go-go-db").C("users").Insert(u)
 
 	uj, _ := json.Marshal(u)
 	fmt.Println(uj)
@@ -68,7 +84,22 @@ func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request, _ ht
 	fmt.Fprintf(w, "%s\n", uj)
 }
 
-func (uc UserController) DeleteUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (uc UserController) DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id := p.ByName("id")
+
+	if !bson.IsObjectIdHex(id) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	oid := bson.ObjectIdHex(id)
+
+	if err := uc.session.DB("go-go-db").C("users").RemoveId(oid); err != nil {
+		w.WriteHeader(404)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "deleted\n")
+	fmt.Fprint(w, "Deleted user", oid, "\n")
+
 }
