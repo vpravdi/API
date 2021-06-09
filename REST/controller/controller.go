@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	//"github.com/globalsign/mgo"
+	//"github.com/globalsign/mgo" alternate packages in case the default ones dont work
 	//"github.com/globalsign/mgo/bson"
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
@@ -22,25 +22,6 @@ func NewUserController(s *mgo.Session) *UserController {
 	return &UserController{s}
 }
 
-/*
-func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	s := `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-			<meta charset="UTF-8">
-			<title>Index</title>
-			</head>
-			<body>
-			<a href="/user/88345">GO TO: http://localhost:8080/user/88345</a>
-			</body>
-			</html>`
-
-	w.Header().Set("Content-Type", "text/html;charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(s))
-
-}
-*/
 func (uc UserController) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 	id := p.ByName("id")
@@ -88,6 +69,7 @@ func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request, _ ht
 		fmt.Println(err)
 	}
 	defer f.Close()
+
 	json.NewEncoder(f).Encode(u)
 }
 
