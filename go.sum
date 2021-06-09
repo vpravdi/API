@@ -1,3 +1,5 @@
+github.com/GoesToEleven/golang-web-dev v0.0.0-20191213230751-ef2d6fb2fe25 h1:PXb5wpGn+awL+vsW96ZoS2r9ybuXPHcradpjQpupYME=
+github.com/GoesToEleven/golang-web-dev v0.0.0-20191213230751-ef2d6fb2fe25/go.mod h1:kCzgRnGeAg0uoJRAJeogJJE1TBmBI0Vd1sSYJW00br0=
 github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8 h1:DujepqpGd1hyOd7aW59XpK7Qymp8iy83xq74fLr21is=
 github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8/go.mod h1:xkRDCp4j0OGD1HRkm4kmhM+pmpv3AKq5SU7GMg4oO/Q=
 github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=

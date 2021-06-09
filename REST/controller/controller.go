@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	//"github.com/globalsign/mgo"
 	//"github.com/globalsign/mgo/bson"
@@ -82,6 +83,12 @@ func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request, _ ht
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "%s\n", uj)
+	f, err := os.Create("userdata")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer f.Close()
+	json.NewEncoder(f).Encode(u)
 }
 
 func (uc UserController) DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
